@@ -1,11 +1,17 @@
-import SubmitButton from "@/app/_components/EditCabinButton";
+import SubmitButton from "@/app/_components/SubmitButton";
 import { updateReservation } from "@/app/_lib/actions";
 import { getBooking } from "@/app/_lib/data-service";
 
-export default async function Page({ params }: { params: { bookingId: string } }) {
-  const reservationId = params.bookingId;
+export default async function Page({
+  params,
+}: {
+  params: { bookingId: string };
+}) {
+  const reservationId = +params.bookingId;
 
-  const { cabins, observations, numGuests, guestId } = await getBooking(+reservationId)
+  const { cabins, observations, numGuests, guestId } = await getBooking(
+    +reservationId
+  );
   const maxCapacity = cabins!.maxCapacity;
 
   return (
@@ -14,7 +20,10 @@ export default async function Page({ params }: { params: { bookingId: string } }
         Edit Reservation #{reservationId}
       </h2>
 
-      <form action={updateReservation.bind(null, guestId, reservationId)} className="bg-primary-900 py-8 px-12 text-lg flex gap-6 flex-col">
+      <form
+        action={updateReservation.bind(null, guestId, reservationId)}
+        className="bg-primary-900 py-8 px-12 text-lg flex gap-6 flex-col max-[358px]:px-5"
+      >
         <div className="space-y-2">
           <label htmlFor="numGuests">How many guests?</label>
           <select
@@ -40,7 +49,7 @@ export default async function Page({ params }: { params: { bookingId: string } }
             Anything we should know about your stay?
           </label>
           <textarea
-            defaultValue={observations}
+            defaultValue={observations ?? undefined}
             name="observations"
             className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
           />
@@ -55,4 +64,3 @@ export default async function Page({ params }: { params: { bookingId: string } }
     </div>
   );
 }
-

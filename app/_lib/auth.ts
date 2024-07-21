@@ -16,12 +16,12 @@ const authConfig = {
     },
     async signIn({ user }: { user: AdapterUser | User }) {
       try {
-        const existingGuest = await getGuest(user.email)
+        const existingGuest = await getGuest(user.email as string)
 
         if (!existingGuest) {
           await createGuest({
-            email: user.email,
-            fullName: user.name,
+            email: user.email as string,
+            fullName: user.name as string,
           })
         }
 

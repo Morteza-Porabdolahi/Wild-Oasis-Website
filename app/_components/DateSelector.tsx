@@ -1,11 +1,17 @@
-'use client'
+"use client";
 
-import { differenceInDays, isPast, isSameDay, isWithinInterval } from "date-fns";
+import {
+  differenceInDays,
+  isPast,
+  isSameDay,
+  isWithinInterval,
+} from "date-fns";
 
 import { DateRange, DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { Cabin, Settings } from "../_lib/types";
 import { useReservation } from "./ReservationConetext";
+import { useScreenSize } from "../hooks/useScreenSize";
 
 function isAlreadyBooked(range: DateRange | undefined, datesArr: Date[]) {
   return (
@@ -21,26 +27,29 @@ type Props = {
   settings: Settings;
   cabin: Cabin;
   bookedDates: Date[];
-}
+};
 
-function DateSelector({ settings, cabin, bookedDates }: Props) {
-  const { updateRange, range } = useReservation()
+export default function DateSelector({ settings, cabin, bookedDates }: Props) {
+  const { width } = useScreenSize();
+  const { updateRange, range } = useReservation();
 
   const { regularPrice, discount } = cabin;
 
   const displayRange = isAlreadyBooked(range, bookedDates) ? undefined : range;
 
-  const numNights = differenceInDays(displayRange?.to ?? "", displayRange?.from ?? "");
+  const numNights = differenceInDays(
+    displayRange?.to ?? "",
+    displayRange?.from ?? ""
+  );
   const cabinPrice = numNights * (regularPrice - discount);
-
 
   // SETTINGS
   const { minBookingLength, maxBookingLength } = settings;
 
   return (
-    <div className="flex flex-col justify-between">
+    <div className="flex flex-col justify-between border border-primary-800">
       <DayPicker
-        className="pt-12 place-self-center"
+        className="py-8 place-self-center"
         mode="range"
         min={minBookingLength! + 1}
         selected={displayRange}
@@ -49,13 +58,16 @@ function DateSelector({ settings, cabin, bookedDates }: Props) {
         fromDate={new Date()}
         toYear={new Date().getFullYear() + 5}
         captionLayout="dropdown"
-        numberOfMonths={2}
+        numberOfMonths={(width > 795 && width < 1077) || width < 585 ? 1 : 2}
         onSelect={(range) => updateRange(range)}
-        disabled={(curDate) => isPast(curDate) || bookedDates.some(date => isSameDay(date, curDate))}
+        disabled={(curDate) =>
+          isPast(curDate) ||
+          bookedDates.some((date) => isSameDay(date, curDate))
+        }
       />
 
-      <div className="flex items-center justify-between px-8 bg-accent-500 text-primary-800 h-[72px]">
-        <div className="flex items-baseline gap-6">
+      <div className="max-[585px]:flex-col max-[585px]:h-auto max-[585px]:py-4 max-[585px]:gap-4 flex items-center justify-between px-8 bg-accent-500 text-primary-800 h-[72px]">
+        <div className="max-[475px]:flex-col max-[475px]:items-center flex items-baseline gap-6">
           <p className="flex gap-2 items-baseline">
             {discount > 0 ? (
               <>
@@ -94,5 +106,3 @@ function DateSelector({ settings, cabin, bookedDates }: Props) {
     </div>
   );
 }
-
-export default DateSelector;

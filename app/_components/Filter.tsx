@@ -43,7 +43,7 @@ type ButtonProps = {
 
 function Button({ filter, handleFilter, activeFilter, children }: ButtonProps) {
   return (
-    <button onClick={() => handleFilter(filter)} className={`${filter === activeFilter ? "bg-primary-700 text-primary-50" : ""} px-5 py-2 transition-colors hover:bg-primary-700`}>{children}</button>
+    <button onClick={() => handleFilter(filter)} className={`${filter === activeFilter ? "bg-primary-700 text-primary-50" : ""} max-[314px]:text-sm px-3 py-2 transition-colors hover:bg-primary-700`}>{children}</button>
   )
 }
 

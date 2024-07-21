@@ -51,14 +51,14 @@ export async function deleteReservation(bookingId: number) {
   revalidatePath('/account/reservations', 'page')
 }
 
-export async function updateReservation(guestId: number, bookingId: string, formData: FormData) {
+export async function updateReservation(guestId: number, bookingId: number, formData: FormData) {
   const session = await authorizeUser();
 
   if (guestId !== session.user!.guestId) throw new Error('You can only edit your own bookings :)')
 
   const updatedBooking = {
-    observations: formData.get('observations')?.slice(0, 1000),
-    numGuests: formData.get('numGuests')
+    observations: formData.get('observations')?.slice(0, 1000) as (string | null),
+    numGuests: formData.get('numGuests') as unknown as number
   }
 
   await updateBooking(bookingId, updatedBooking)
@@ -67,14 +67,14 @@ export async function updateReservation(guestId: number, bookingId: string, form
   redirect('/account/reservations')
 }
 
-export async function createReservations(data: { cabinId: number; numNights: number; cabinPrice: number; startDate: Date | undefined; endDate: Date | undefined }, formData: FormData) {
+export async function createReservations(data: { cabinId: number; numNights: number; cabinPrice: number; startDate: Date; endDate: Date }, formData: FormData) {
   const session = await authorizeUser()
 
   const bookingData = {
     ...data,
     guestId: session.user!.guestId,
-    numGuests: formData.get('numGuests'),
-    observations: String(formData.get('observations')).slice(0,1000),
+    numGuests: formData.get('numGuests') as unknown as number,
+    observations: formData.get('observations')?.slice(0,1000) as (string | null),
     extrasPrice: 0,
     totalPrice: data.cabinPrice,
     hasBreakfast: false,
