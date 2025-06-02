@@ -23,7 +23,7 @@ async function authorizeUser() {
 export async function updateProfile(formData: FormData) {
   const session = await authorizeUser();
 
-  const nationalID = formData.get('nationalID') as string;
+  const nationalID = formData.get('nationalID') ?? "";
   const [nationality, countryFlag] = (formData.get('nationality') as string).split('%');
 
   if (!/^[a-zA-Z0-9]{6,12}$/.test(nationalID)) throw new Error('Please provide a valid national ID')
